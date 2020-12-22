@@ -10,3 +10,9 @@ resource "google_project_service" "services" {
   project  = google_project.project.project_id
   service  = each.value
 }
+
+module "gcs_and_gce_challenge_lab" {
+  source = "./gcs-and-gce-challenge-lab"
+  uid_prefix = var.uid_prefix
+  region = var.region
+}
