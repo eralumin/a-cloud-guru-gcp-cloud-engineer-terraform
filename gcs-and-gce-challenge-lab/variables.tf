@@ -3,5 +3,14 @@ variable "uid_prefix" {
 }
 
 variable "region" {
-    type = string
+  type = string
+}
+
+variable "zone" {
+  type = string
+}
+
+variable "lab_name" {
+  type    = string
+  default = "gcs-and-gce-challenge-lab"
 }

@@ -15,4 +15,5 @@ module "gcs_and_gce_challenge_lab" {
   source = "./gcs-and-gce-challenge-lab"
   uid_prefix = var.uid_prefix
   region = var.region
+  zone = var.zone
 }
