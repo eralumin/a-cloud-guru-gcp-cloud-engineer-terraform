@@ -4,7 +4,7 @@ resource "google_storage_bucket" "logs" {
 }
 
 resource "google_compute_instance" "instance" {
-  name         = "${var.uid_prefix}-${var.lab_name}-instance"
+  name         = "${var.lab_name}-instance"
   machine_type = "f1-micro"
   zone         = var.zone
 
