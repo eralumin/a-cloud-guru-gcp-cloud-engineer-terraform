@@ -17,3 +17,9 @@ module "gcs_and_gce_challenge_lab" {
   region = var.region
   zone = var.zone
 }
+
+module "managed_instance_groups_lab" {
+  source = "./managed-instance-groups-lab"
+  uid_prefix = var.uid_prefix
+  region = var.region
+}
