@@ -28,3 +28,38 @@ resource "google_compute_subnetwork" "subnet" {
   region        = "us-west1"
   network       = google_compute_network.vpc_network.id
 }
+
+data "google_iam_role" "log_writer" {
+  name = "roles/logging.logWriter"
+}
+
+data "google_iam_role" "metric_writer" {
+  name = "roles/monitoring.metricWriter"
+}
+
+resource "google_project_iam_custom_role" "base_gce" {
+  role_id = "baseGCE"
+  title   = "Base GCE"
+  project = google_project.project.project_id
+
+  permissions = concat(
+    data.google_iam_role.log_writer.included_permissions,
+    data.google_iam_role.metric_writer.included_permissions
+  )
+}
+
+resource "google_service_account" "frontend" {
+  account_id   = "frontend"
+  display_name = "Service Account for Frontend Servers"
+
+  project = google_project.project.project_id
+}
+
+resource "google_project_iam_binding" "base_gce_role_binding" {
+  project = google_project.project.project_id
+  role    = google_project_iam_custom_role.base_gce.name
+
+  members = [
+    "serviceAccount:${google_service_account.frontend.email}",
+  ]
+}
