@@ -23,3 +23,9 @@ module "managed_instance_groups_lab" {
   uid_prefix = var.uid_prefix
   region = var.region
 }
+
+module "custom_mode_vpcs_lab" {
+  source = "./custom-mode-vpcs-lab"
+  uid_prefix = var.uid_prefix
+  billing_account = var.billing_account
+}
