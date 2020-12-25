@@ -114,3 +114,17 @@ resource "google_compute_region_autoscaler" "autoscaler" {
   }
 }
 
+resource "google_compute_firewall" "allow-incoming-to-frontend" {
+  project   = google_project.project.project_id
+  name      = "allow-incoming-to-frontend"
+  network   = google_compute_network.vpc_network.name
+  direction = "INGRESS"
+
+  target_service_accounts = [google_service_account.frontend.email]
+  source_ranges           = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "icmp"
+  }
+}
+
