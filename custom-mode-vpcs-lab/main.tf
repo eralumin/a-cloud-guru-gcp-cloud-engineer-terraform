@@ -89,3 +89,28 @@ resource "google_compute_instance_template" "instance_template" {
     scopes = []
   }
 }
+
+resource "google_compute_region_instance_group_manager" "region_instance_group_manager" {
+  project = google_project.project.project_id
+  name    = "${var.lab_name}-frontend-it-group"
+
+  base_instance_name = "${var.lab_name}-frontend-instance"
+  region             = google_compute_subnetwork.subnet.region
+
+  version {
+    instance_template = google_compute_instance_template.instance_template.id
+  }
+}
+
+resource "google_compute_region_autoscaler" "autoscaler" {
+  project = google_project.project.project_id
+  name    = "${var.lab_name}-frontend-autoscaler"
+  region  = google_compute_subnetwork.subnet.region
+  target  = google_compute_region_instance_group_manager.region_instance_group_manager.id
+
+  autoscaling_policy {
+    min_replicas = 2
+    max_replicas = 3
+  }
+}
+
