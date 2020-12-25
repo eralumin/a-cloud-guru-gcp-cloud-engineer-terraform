@@ -65,18 +65,20 @@ resource "google_project_iam_binding" "base_gce_role_binding" {
 }
 
 resource "google_compute_instance_template" "instance_template" {
-  project = google_project.project.project_id
+  project      = google_project.project.project_id
   name         = "${var.lab_name}-frontend-it"
   machine_type = "f1-micro"
-  region = google_compute_subnetwork.subnet.region
+  region       = google_compute_subnetwork.subnet.region
+
+  tags = ["open-ssh"]
 
   disk {
     source_image = "debian-cloud/debian-9"
   }
 
   network_interface {
-    network = google_compute_network.vpc_network.self_link
-    subnetwork = google_compute_subnetwork.subnet.name
+    network            = google_compute_network.vpc_network.self_link
+    subnetwork         = google_compute_subnetwork.subnet.name
     subnetwork_project = google_project.project.project_id
 
     access_config {
@@ -85,7 +87,7 @@ resource "google_compute_instance_template" "instance_template" {
   }
 
   service_account {
-    email = google_service_account.frontend.email
+    email  = google_service_account.frontend.email
     scopes = []
   }
 }
@@ -128,3 +130,17 @@ resource "google_compute_firewall" "allow-incoming-to-frontend" {
   }
 }
 
+resource "google_compute_firewall" "open-ssh-by-tag" {
+  project   = google_project.project.project_id
+  name      = "open-ssh-by-tag"
+  network   = google_compute_network.vpc_network.name
+  direction = "INGRESS"
+
+  target_tags   = ["open-ssh"]
+  source_ranges = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+}
