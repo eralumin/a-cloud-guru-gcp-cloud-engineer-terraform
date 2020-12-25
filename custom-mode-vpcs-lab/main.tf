@@ -63,3 +63,29 @@ resource "google_project_iam_binding" "base_gce_role_binding" {
     "serviceAccount:${google_service_account.frontend.email}",
   ]
 }
+
+resource "google_compute_instance_template" "instance_template" {
+  project = google_project.project.project_id
+  name         = "${var.lab_name}-frontend-it"
+  machine_type = "f1-micro"
+  region = google_compute_subnetwork.subnet.region
+
+  disk {
+    source_image = "debian-cloud/debian-9"
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.self_link
+    subnetwork = google_compute_subnetwork.subnet.name
+    subnetwork_project = google_project.project.project_id
+
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+  service_account {
+    email = google_service_account.frontend.email
+    scopes = []
+  }
+}
